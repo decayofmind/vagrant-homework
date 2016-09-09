@@ -1,0 +1,4 @@
+---
+zabbix_server_host: 192.168.111.12
+
+# vim: set et fenc= ft=ansible sts=2 sw=2 ts=2 tw=0 :

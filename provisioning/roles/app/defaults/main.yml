@@ -1,0 +1,6 @@
+---
+app_user: vagrant
+app_version: 0.0.1
+app_port: 5000
+
+# vim: set et fenc= ft=ansible sts=2 sw=2 ts=2 tw=0 :

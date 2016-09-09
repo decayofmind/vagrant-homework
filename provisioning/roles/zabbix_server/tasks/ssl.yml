@@ -1,0 +1,15 @@
+---
+- name: install mod_ssl for apache
+  yum: name=mod_ssl state=present
+
+- name: create self-signed cert
+  command: >
+    openssl req -x509 -nodes -days 3650 -newkey rsa:2048
+    -subj "/C=CZ/ST=/L=Prague/O=IT/CN={{ cert_common_name | d(ansible_fqdn) }}"
+    -keyout /etc/pki/tls/private/{{ cert_common_name | d(ansible_fqdn) }}.key
+    -out /etc/pki/tls/certs/{{ cert_common_name | d(ansible_fqdn) }}.crt
+    creates="/etc/pki/tls/certs/{{ cert_common_name | d(ansible_fqdn) }}.crt"
+  notify:
+    - restart httpd
+
+# vim: set et fenc= ft=ansible sts=2 sw=2 ts=2 tw=0 :

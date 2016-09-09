@@ -1,0 +1,5 @@
+!app/build/libs/homework*.jar
+app/build
+*.retry
+.gradle/
+.vagrant/

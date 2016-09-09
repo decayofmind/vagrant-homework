@@ -1,0 +1,28 @@
+# {{ ansible_managed }}
+
+PidFile=/var/run/zabbix/zabbix_agentd.pid
+LogFile=/var/log/zabbix/zabbix_agentd.log
+LogFileSize=0
+Server={{ zabbix_server_host }}
+ListenPort={{ zabbix_agent_port }}
+ListenIP={{ zabbix_agent_ip }}
+StartAgents={{ zabbix_agent_agents }}
+ServerActive={{ zabbix_server_active_host }}
+Hostname={{ ansible_hostname }}
+
+# Timeout=3
+# AllowRoot=0
+# User=zabbix
+
+Include=/etc/zabbix/zabbix_agentd.d/
+
+# TLSConnect=unencrypted
+# TLSAccept=unencrypted
+# TLSCAFile=
+# TLSCRLFile=
+# TLSServerCertIssuer=
+# TLSServerCertSubject=
+# TLSCertFile=
+# TLSKeyFile=
+# TLSPSKIdentity=
+# TLSPSKFile=

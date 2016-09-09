@@ -1,0 +1,8 @@
+---
+- name: restart httpd
+  service: name=httpd state=restarted
+
+- name: restart zabbix-server
+  service: name=zabbix-server state=restarted
+
+# vim: set et fenc= ft=ansible sts=2 sw=2 ts=2 tw=0 :

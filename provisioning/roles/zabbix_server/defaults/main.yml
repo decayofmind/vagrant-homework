@@ -1,0 +1,21 @@
+---
+zabbix_version: 3.0
+zabbix_repo_release: 1
+zabbix_db_name: zabbix
+zabbix_db_username: zabbix
+zabbix_db_password: zabbix
+zabbix_db_hostname: localhost
+zabbix_db_port: 0
+zabbix_server_port: 10051
+zabbix_server_name: main
+zabbix_php_timezone: Europe/Prague
+
+zabbix_web_username: Admin
+zabbix_web_password: zabbix
+
+zabbix_templates:
+  - nginx
+
+httpd_ssl: False
+
+# vim: set et fenc= ft=ansible sts=2 sw=2 ts=2 tw=0 :

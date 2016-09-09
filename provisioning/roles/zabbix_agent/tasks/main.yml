@@ -1,0 +1,41 @@
+---
+- name: install python-pip
+  yum: name=python-pip state=present
+
+- name: install zabbix-api module
+  pip: name=zabbix-api state=present
+
+- name: install zabbix offical repo
+  yum: name="http://repo.zabbix.com/zabbix/{{ zabbix_version }}/rhel/7/x86_64/zabbix-release-{{ zabbix_version }}-{{ zabbix_repo_release }}.el7.noarch.rpm"
+
+- name: install zabbix-agent
+  yum: name=zabbix-agent state=present
+
+- name: configure zabbix-agent
+  template: src=etc/zabbix/zabbix_agentd.conf.j2 dest=/etc/zabbix/zabbix_agentd.conf
+  notify:
+    - restart zabbix-agent
+
+- name: ensure zabbix-agent is started and enabled
+  service: name=zabbix-agent state=started enabled=yes
+
+- name: register host on zabbix server
+  zabbix_host:
+    server_url: "{{ zabbix_server_url }}"
+    login_user: "{{ zabbix_web_username }}"
+    login_password: "{{ zabbix_web_password }}"
+    host_name: "{{ ansible_hostname }}"
+    host_groups: "{{ zabbix_hostgroups }}"
+    link_templates: "{{ zabbix_templates }}"
+    state: present
+    status: enabled
+    inventory_mode: automatic
+    interfaces:
+      - type: 1
+        main: 1
+        useip: 1
+        ip: "{{ zabbix_agent_host }}"
+        dns: "{{ ansible_hostname }}"
+        port: "{{ zabbix_agent_port }}"
+
+# vim: set et fenc= ft=ansible sts=2 sw=2 ts=2 tw=0 :

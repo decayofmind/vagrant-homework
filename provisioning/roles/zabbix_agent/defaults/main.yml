@@ -1,0 +1,17 @@
+---
+zabbix_version: 3.0
+zabbix_repo_release: 1
+zabbix_agent_port: 10050
+zabbix_agent_ip: 0.0.0.0
+zabbix_agent_host: "{{ ansible_default_ipv4['address'] }}"
+zabbix_agent_agents: 3
+zabbix_server_active_host: "{{ zabbix_server_host }}"
+zabbix_server_url: "http://{{ zabbix_server_host }}/zabbix"
+
+zabbix_web_username: Admin
+zabbix_web_password: zabbix
+
+zabbix_hostgroups:
+  - Linux servers
+
+# vim: set et fenc= ft=ansible sts=2 sw=2 ts=2 tw=0 :

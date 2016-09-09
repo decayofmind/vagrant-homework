@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+
+server {
+    listen       {{ nginx_status_port }};
+    server_name  localhost ;
+
+    location /nginx_status {
+    stub_status on;
+    access_log   off;
+    allow 127.0.0.1;
+    deny all;
+    }
+}
+
+# vim: set et fenc=utf-8 sts=4 sw=4 ts=4 tw=0 :

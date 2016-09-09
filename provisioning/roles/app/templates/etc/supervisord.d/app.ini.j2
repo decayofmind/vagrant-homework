@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+[program:app]
+command=java -Dlogging.path=/var/log/{{ app_user }}/ -jar /home/{{ app_user }}/homework-{{ app_version }}.jar
+user={{ app_user }}
+autostart=true
+autorestart=true
+startsecs=10
+startretries=3
+stdout_logfile=/var/log/{{ app_user }}/app_stdout.log
+stderr_logfile=/var/log/{{ app_user }}/app_stderr.log

@@ -1,0 +1,6 @@
+---
+- hosts: mon
+  become: true
+  roles:
+    - common
+    - { role: zabbix_server , httpd_ssl: True, cert_common_name: localhost }
