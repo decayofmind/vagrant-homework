@@ -1,0 +1,25 @@
+---
+- name: configure nginx status
+  template: src=etc/nginx/conf.d/status.conf.j2 dest=/etc/nginx/conf.d/status.conf
+  notify:
+    - check nginx configuration
+    - restart nginx
+  tags:
+    - nginx:config:status
+
+- name: create zabbix_agentd.d directory
+  file: path=/etc/zabbix/zabbix_agentd.d state=directory
+  tags:
+    - nginx:zabbix
+
+- name: place nginx params for zabbix-agent
+  copy: src=etc/zabbix/zabbix_agentd.d/nginx-params.conf dest=/etc/zabbix/zabbix_agentd.d/nginx-params.conf
+  tags:
+    - nginx:zabbix:params
+
+- name: place nginx status check script
+  template: src=usr/local/bin/nginx-check.sh.j2 dest=/usr/local/bin/nginx-check.sh mode=a+x
+  tags:
+    - nginx:zabbix:check
+
+# vim: set et fenc= ft=ansible sts=2 sw=2 ts=2 tw=0 :

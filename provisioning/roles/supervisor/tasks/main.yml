@@ -1,8 +1,12 @@
 ---
 - name: install supervisor
   yum: name=supervisor state=present
+  tags:
+    - supervisor:install
 
 - name: ensure supervisor is started and enabled
   service: name=supervisord state=started enabled=yes
+  tags:
+    - supervisor:service
 
 # vim: set et fenc= ft=ansible sts=2 sw=2 ts=2 tw=0 :

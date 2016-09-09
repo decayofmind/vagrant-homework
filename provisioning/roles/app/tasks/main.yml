@@ -1,9 +1,13 @@
 ---
 - name: install java (openjdk)
   yum: name=java-1.8.0-openjdk state=present
+  tags:
+    - app:deploy:java
 
 - name: create user for running app
   user: name="{{ app_user }}" shell=/bin/bash state=present
+  tags:
+    - app:deploy:user
 
 - name: ensure log dir exists
   file:
@@ -11,23 +15,34 @@
     state: directory
     owner: "{{ app_user }}"
     group: "{{ app_user }}"
+  tags:
+    - app:deploy:logdir
 
 - name: place nginx config
   template: src=etc/nginx/conf.d/app.conf.j2 dest=/etc/nginx/conf.d/app.conf backup=yes
   notify:
     - check nginx configuration
     - restart nginx
+  tags:
+    - app:deploy:nginx
 
 - name: deploy application
   command: cp "/vagrant/app/build/libs/homework-{{ app_version }}.jar" /home/{{ app_user }}/homework-{{ app_version }}.jar
   # creates: /home/{{ app_user }}/homework-{{ app_version }}.jar
+  tags:
+    - app:deploy:jar
+    - skip_ansible_lint
 
-- name: create superuserd profile for app
+- name: create supervisor profile for app
   template: src=etc/supervisord.d/app.ini.j2 dest=/etc/supervisord.d/app.ini backup=yes
   notify:
     - restart app
+  tags:
+    - app:deploy:supervisor
 
 - name: ensure application is loaded
   supervisorctl: name=app state=present
+  tags:
+    - app:deploy:run
 
 # vim: set et fenc= ft=ansible sts=2 sw=2 ts=2 tw=0 :

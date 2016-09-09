@@ -7,7 +7,7 @@ will be up and running after you type ```vagrant up```
 # Requirements
 To run this homework you'll need:
 
-* Vagrant 1.8.5
+* Vagrant 1.8.5 (with VirtualBox as provider)
 * Ansible 2.0+
 * (optional) If you want to build Spring-boot up from source you'd rather need
 Gradle and JDK installed.
@@ -35,6 +35,9 @@ installation of zabbix-web package requires Apache (httpd) and bring working con
 for it, so that's why Apache is used here (not nginx).
 
 Web interface of Zabbix can be reached at https://192.168.111.12/zabbix or at https://127.0.0.1:1443/zabbix.
+
+Login: Admin
+Password: zabbix
 
 # Stress test
 I choose a standard tool, called ab from Apache package.

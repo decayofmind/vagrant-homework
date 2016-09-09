@@ -1,24 +1,36 @@
 ---
 - name: install zabbix offical repo
   yum: name="http://repo.zabbix.com/zabbix/{{ zabbix_version }}/rhel/7/x86_64/zabbix-release-{{ zabbix_version }}-{{ zabbix_repo_release }}.el7.noarch.rpm"
+  tags:
+    - zabbix_server:repo
 
 - name: install zabbix-server package for mysql
   yum: name="{{ item }}"
   with_items:
     - zabbix-server-mysql
     - zabbix-web-mysql
+  tags:
+    - zabbix_server:install
 
 - name: install mariadb-server
   yum: name=mariadb-server
+  tags:
+    - zabbix_server:mariadb:install
 
 - name: install MySQL-python package to work with mysql modules
   yum: name=MySQL-python state=present
+  tags:
+    - zabbix_server:deps
 
 - name: ensure mariadb is running and enabled
   service: name=mariadb state=started enabled=yes
+  tags:
+    - zabbix_server:mariadb:service
 
 - name: create zabbix database
   mysql_db: name="{{ zabbix_db_name }}" state=present collation=utf8_bin
+  tags:
+    - zabbix_server:db
 
 - name: create mysql user for zabbix
   mysql_user:
@@ -27,10 +39,14 @@
     priv: zabbix.*:ALL
     host: "{{ zabbix_db_hostname }}"
     state: present
+  tags:
+    - zabbix_server:db
 
 - name: check if zabbix schema was not populated
   stat: path=/var/lib/mysql/zabbix/users.frm
   register: zabbix_schema
+  tags:
+    - zabbix_server:db
 
 - name: import zabbix mysql schema
   mysql_db:
@@ -38,6 +54,8 @@
     target: /usr/share/doc/zabbix-server-mysql-3.0.4/create.sql.gz
     state: import
   when: zabbix_schema.stat.exists == False
+  tags:
+    - zabbix_server:db
 
 - name: configure zabbix-server
   template:
@@ -46,41 +64,61 @@
     backup: yes
   notify:
     - restart zabbix-server
+  tags:
+    - zabbix_server:config
 
 - name: uncomment timezone in zabbix apache config
   lineinfile:
     regexp: "^.*# ?php_value date.timezone.*$"
     line: "        php_value date.timezone {{ zabbix_php_timezone }}"
     dest: /etc/httpd/conf.d/zabbix.conf
+  tags:
+    - zabbix_server:httpd
 
 - name: ensure zabbix-server is running and enabled
   service: name=zabbix-server state=started enabled=yes
+  tags:
+    - zabbix_server:service
 
 - name: configure zabbix-web
   template:
     src: etc/zabbix/web/zabbix.conf.php.j2
     dest: /etc/zabbix/web/zabbix.conf.php
     backup: yes
+  tags:
+    - zabbix_server:web
 
 - name: ensure apache is installed
   yum: name=httpd state=present
+  tags:
+    - zabbix_server:httpd
 
 - include: ssl.yml
   when: httpd_ssl == True
+  tags:
+    - zabbix_server:ssl
 
 - name: ensure apache is restarted and enabled
   service: name=httpd state=restarted enabled=yes
+  tags:
+    - zabbix_server:httpd
 
 - name: install python-pip
   yum: name=python-pip
+  tags:
+    - zabbix_server:deps
 
 - name: install zabbix-cli tools
   pip: name=mamonsu state=present
+  tags:
+    - zabbix_server:cli
 
 - name: copy zabbix templates
   copy: src="templates/{{ item }}.xml" dest=/tmp
   with_items:
     - "{{ zabbix_templates }}"
+  tags:
+    - zabbix_server:templates
 
 - name: import templates to zabbix
   command: >
@@ -90,5 +128,8 @@
     --password={{ zabbix_web_password }}
   with_items:
     - "{{ zabbix_templates }}"
+  tags:
+    - zabbix_server:templates
+    - skip_ansible_lint
 
 # vim: set et fenc=utf-8 ft=ansible sts=2 sw=2 ts=2 tw=0 :
